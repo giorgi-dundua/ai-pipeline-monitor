@@ -1,0 +1,2 @@
+ALTER TABLE requests 
+ADD COLUMN pricing_version TIMESTAMPTZ NOT NULL DEFAULT now();

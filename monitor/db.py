@@ -3,6 +3,8 @@ Postgres connection management and all database queries.
 Uses psycopg3 directly — no ORM.
 """
 import uuid
+from datetime import datetime
+from decimal import Decimal 
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional
@@ -63,7 +65,8 @@ def insert_request(
     input_tokens: int,
     output_tokens: int,
     latency_ms: int,
-    cost_usd: float,
+    cost_usd: Decimal,
+    pricing_version: datetime,
     success: bool,
     error_type: Optional[str] = None,
 ) -> uuid.UUID:
@@ -71,12 +74,12 @@ def insert_request(
         """
         INSERT INTO requests
             (model, prompt_hash, input_tokens, output_tokens,
-             latency_ms, cost_usd, success, error_type)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+             latency_ms, cost_usd, pricing_version, success, error_type)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id
         """,
         (model, prompt_hash, input_tokens, output_tokens,
-         latency_ms, cost_usd, success, error_type),
+         latency_ms, cost_usd, pricing_version, success, error_type),
     ).fetchone()
     return row["id"]
 
